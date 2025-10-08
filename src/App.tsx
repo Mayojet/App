@@ -110,61 +110,88 @@ export default function App() {
   );
 }
 
+const SORTERS = {
+    name: (a: Pokemon, b: Pokemon) => a.name.localeCompare(b.name),
+    id: (a: Pokemon, b: Pokemon) => a.id - b.id,
+    base_experience: (a: Pokemon, b: Pokemon) =>
+      (a.base_experience || 0) - (b.base_experience || 0),
+  } as const;
+  
+
 // ===== List View =====
-function ListView({ all, setCurrentOrder }: { all: Pokemon[]; setCurrentOrder: (names: string[]) => void; }) {
-  const [query, setQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'id' | 'base_experience'>('name');
-  const [dir, setDir] = useState<'asc' | 'desc'>('asc');
-
-  const sorters: Record<typeof sortBy, (a: Pokemon, b: Pokemon) => number> = {
-    name: (a, b) => a.name.localeCompare(b.name),
-    id: (a, b) => a.id - b.id,
-    base_experience: (a, b) => (a.base_experience || 0) - (b.base_experience || 0),
-  };
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const base = q ? all.filter(p => p.name.includes(q) || String(p.id) === q) : all;
-    const sorted = [...base].sort(sorters[sortBy]);
-    if (dir === 'desc') sorted.reverse();
-    return sorted;
-  }, [all, query, sortBy, dir]);
-
-  useEffect(() => { setCurrentOrder(filtered.map(p => p.name)); }, [filtered, setCurrentOrder]);
-
-  return (
-    <section>
-      <div className="controls">
-        <input className="search" placeholder="Search name or id…" value={query} onChange={e => setQuery(e.target.value)} />
-        <label>
-          Sort by:
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)}>
-            <option value="name">Name</option>
-            <option value="id">ID</option>
-            <option value="base_experience">Base XP</option>
-          </select>
-        </label>
-        <button className="btn" onClick={() => setDir(d => d === 'asc' ? 'desc' : 'asc')}>
-          {dir === 'asc' ? 'Asc ⬆︎' : 'Desc ⬇︎'}
-        </button>
-      </div>
-
-      <ul className="list">
-        {filtered.map(p => (
-          <li key={p.id} className="card">
-            <Link to={`/pokemon/${p.name}`} className="cardInner">
-              <img src={p.sprite} alt={p.name} loading="lazy" />
-              <div>
-                <h3>#{p.id} {cap(p.name)}</h3>
-                <p>Types: {p.types.join(', ')}</p>
-              </div>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
+function ListView({
+    all,
+    setCurrentOrder,
+  }: {
+    all: Pokemon[];
+    setCurrentOrder: (names: string[]) => void;
+  }) {
+    const [query, setQuery] = useState("");
+    const [sortBy, setSortBy] = useState<keyof typeof SORTERS>("name");
+    const [dir, setDir] = useState<"asc" | "desc">("asc");
+  
+    const filtered = useMemo(() => {
+      const q = query.trim().toLowerCase();
+      const base = q
+        ? all.filter((p) => p.name.includes(q) || String(p.id) === q)
+        : all;
+  
+      const sorted = [...base].sort(SORTERS[sortBy]);
+      return dir === "desc" ? sorted.reverse() : sorted;
+    }, [all, query, sortBy, dir]);
+  
+    // keep Detail prev/next in sync with what the user sees
+    useEffect(() => {
+      setCurrentOrder(filtered.map((p) => p.name));
+    }, [filtered, setCurrentOrder]);
+  
+    return (
+      <section>
+        <div className="controls">
+          <input
+            className="search"
+            placeholder="Search name or id…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <label>
+            Sort by:
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as keyof typeof SORTERS)}
+            >
+              <option value="name">Name</option>
+              <option value="id">ID</option>
+              <option value="base_experience">Base XP</option>
+            </select>
+          </label>
+          <button
+            className="btn"
+            onClick={() => setDir((d) => (d === "asc" ? "desc" : "asc"))}
+          >
+            {dir === "asc" ? "Asc ⬆︎" : "Desc ⬇︎"}
+          </button>
+        </div>
+  
+        <ul className="list">
+          {filtered.map((p) => (
+            <li key={p.id} className="card">
+              <Link to={`/pokemon/${p.name}`} className="cardInner">
+                <img src={p.sprite} alt={p.name} loading="lazy" />
+                <div>
+                  <h3>
+                    #{p.id} {p.name.charAt(0).toUpperCase() + p.name.slice(1)}
+                  </h3>
+                  <p>Types: {p.types.join(", ")}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
+  
 
 // ===== Gallery View =====
 const ALL_TYPES = [
