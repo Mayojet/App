@@ -46,3 +46,39 @@ img { max-width: 100%; display:block; height:auto; }
 .meta dd { margin:0; }
 .actions { display:flex; align-items:center; gap:12px; margin-top:8px; }
 .home { padding:6px 10px; border-radius:10px; background:var(--muted); }
+
+
+/* --- type badges --- */
+.badges { display:flex; gap:6px; flex-wrap:wrap; }
+
+.badge {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+  color: #fff;                /* default text color */
+  background: #9ca3af;        /* default bg (for unknown types) */
+  border: 1px solid rgba(0,0,0,.08);
+}
+
+/* per-type colors (PokeAPI type names are lowercase) */
+.type-normal   { background:#A8A77A; color:#111; }
+.type-fire     { background:#EE8130; }
+.type-water    { background:#6390F0; }
+.type-electric { background:#F7D02C; color:#111; }
+.type-grass    { background:#7AC74C; color:#111; }
+.type-ice      { background:#96D9D6; color:#111; }
+.type-fighting { background:#C22E28; }
+.type-poison   { background:#A33EA1; }
+.type-ground   { background:#E2BF65; color:#111; }
+.type-flying   { background:#A98FF3; }
+.type-psychic  { background:#F95587; }
+.type-bug      { background:#A6B91A; color:#111; }
+.type-rock     { background:#B6A136; color:#111; }
+.type-ghost    { background:#735797; }
+.type-dragon   { background:#6F35FC; }
+.type-dark     { background:#705746; }
+.type-steel    { background:#B7B7CE; color:#111; }
+.type-fairy    { background:#D685AD; color:#111; }

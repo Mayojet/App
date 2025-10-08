@@ -182,7 +182,11 @@ function ListView({
                   <h3>
                     #{p.id} {p.name.charAt(0).toUpperCase() + p.name.slice(1)}
                   </h3>
-                  <p>Types: {p.types.join(", ")}</p>
+                  <div className="badges">
+                    {p.types.map(t => (
+                    <span key={t} className={`badge type-${t}`}>{t}</span>
+                    ))}
+                    </div>
                 </div>
               </Link>
             </li>
